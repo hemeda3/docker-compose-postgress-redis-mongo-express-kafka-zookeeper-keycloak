@@ -68,9 +68,17 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: password
+
   keycloak:
     image: quay.io/keycloak/keycloak:legacy
+    ports:
+      - 8888:8080
+      - 443:8443
+    volumes:
+      -  ${PWD}/server.crt.pem:/etc/x509/https/tls.crt"
+      -  ${PWD}/server.key.pem:/etc/x509/https/tls.key
     environment:
+#      JAVA_OPTS_APPEND="-Dkeycloak.profile.feature.scripts=enabled -Dkeycloak.profile.feature.upload_scripts=enabled"
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
       DB_DATABASE: keycloak
@@ -81,8 +89,6 @@ services:
       KEYCLOAK_PASSWORD: admin
       # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
       JDBC_PARAMS: "ssl=false"
-    ports:
-      - 8888:8080
     depends_on:
       - postgres
 
@@ -91,6 +97,7 @@ services:
 networks:
   localnet:
     attachable: true
+  keycloak-network:
 
 volumes:
   rs1:
@@ -98,3 +105,5 @@ volumes:
   rs3:
   postgres_data:
     driver: local
+  keycloak-postgres-data:
+  keycloak-nginx-ssl:
